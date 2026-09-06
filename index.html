@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrizePicks +EV Builder</title>
+  <style>
+    body { font-family: sans-serif; background: #121212; color: #fff; padding: 20px; }
+    h1 { color: #00e676; text-align: center; }
+    button { background: #00e676; color: #000; font-weight: bold; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; width: 100%; margin-bottom: 20px; }
+    .card { background: #1e1e1e; border: 1px solid #333; border-radius: 8px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .player-name { font-size: 1.1em; font-weight: bold; }
+    .stat-details { color: #aaa; font-size: 0.9em; }
+    .pick-badge { font-weight: bold; padding: 6px 12px; border-radius: 4px; background: #00e676; color: #000; }
+  </style>
+</head>
+<body>
+
+  <h1>PrizePicks 6-Pick +EV</h1>
+  <button onclick="fetchEVProps()">Generate </button>
+  <div id="props-container">Tap the button above to load top picks.</div>
+
+  <script>
+    async function fetchEVProps() {
+      const container = document.getElementById('props-container');
+      container.innerHTML = 'Mawou got a fat ol ass...';
+
+      try {
+        const response = await fetch('http://localhost:3000/api/props');
+        const data = await response.json();
+
+        if (data.success) {
+          container.innerHTML = data.props.map(prop => `
+            <div class="card">
+              <div>
+                <div class="player-name">${prop.player} (${prop.team})</div>
+                <div class="stat-details">${prop.statType}: <strong>${prop.line}</strong></div>
+              </div>
+              <div class="pick-badge">${prop.pick}</div>
+            </div>
+          `).join('');
+        } else {
+          container.innerHTML = 'Error loading props.';
+        }
+      } catch (err) {
+        container.innerHTML = 'Failed to connect to backend server.';
+      }
+    }
+  </script>
+</body>
+</html>
